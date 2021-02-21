@@ -51,8 +51,8 @@ print(tagList)  # testing purposes
 # Next, I am saving the data into files. Pickling is a way to convert a python object (list, dict, etc.) into a
 # character stream. The idea is that this character stream contains all the information necessary to reconstruct the
 # object in another python script.
-pickle.dump(wordList, open("wordsList.pk1", "wb"))  # write binary
-pickle.dump(tagList, open("classesList.pk1", "wb"))
+pickle.dump(wordList, open("wordList.pk1", "wb"))  # write binary
+pickle.dump(tagList, open("tagList.pk1", "wb"))
 
 # The above organised data is not yet numerical, which is what we need for a machine learning algorithm.
 # The below code assigns 0 or 1 to each of the words depending on
@@ -89,6 +89,6 @@ model.add(Dense(len(trainY[0]), activation="softmax"))  #
 sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 model.compile(loss="categorical_crossentropy", optimizer=sgd, metrics=["accuracy"])
 
-model.fit(np.array(trainX), np.array(trainY), epochs=200, batch_size=5, verbose=1)
-model.save("chatbot_model.model")
+hist = model.fit(np.array(trainX), np.array(trainY), epochs=200, batch_size=5, verbose=1)
+model.save("chatbot.h5", hist)
 print("Done")
