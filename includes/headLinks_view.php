@@ -10,4 +10,4 @@
 <!--Our Own CSS-->
 <link rel="stylesheet" type="text/css" href="../assets/styles/style.css">
 <!-- FavIcon-->
-<link rel="icon" type="image/png" href="../assets/images/logo_bus.jpg"
+<link rel="icon" type="image/png" href="../assets/images/individualLogo.svg"

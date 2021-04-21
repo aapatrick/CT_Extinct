@@ -7,11 +7,13 @@ import nltk  # natural language tool kit
 from nltk.stem import WordNetLemmatizer
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Activation, Dropout
+from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import SGD
 import tensorflow as tf
-physical_devices = tf.config.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(physical_devices[0], True)
+
+physical_devices = tf.config.list_physical_devices('CPU')
+# tf.config.experimental.set_memory_growth(physical_devices[0], True)  # used when training using CUDA and NVIDIA
+# Graphics card.
 
 # SGD stands for Stochastic gradient descent
 

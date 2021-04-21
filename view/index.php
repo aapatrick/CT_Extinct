@@ -1,4 +1,4 @@
- <!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <title>Home</title>
@@ -7,6 +7,8 @@
 
   <body>
     <div class="container-fluid">
+    <h1> Hi My name is tox</h1>>
+    <img src="../assets/images/individualLogo.svg">
       <?php require_once "../includes/navigation_view.php"?>
       <div id ="slideshow" class="carousel slide" data-ride="carosel">
         <ul class="carousel-indicators"><!--4 buttons at the bottom to switch between slides-->
@@ -17,7 +19,7 @@
         </ul>
         <div class="carousel-inner"><!--The different slides of the slideshow-->
           <div class="carousel-item active" id="slideimg">
-            <img src="../assets/images/londonBus.jpg">
+            <img src="../assets/images/individualLogo.svg">
             <div class="carousel-caption">
               <h1 class="display-2">BerWyn Buses Hire<h1><!--makes title a bootsrap size of 2 (large)-->
               <h3>Since 1982</h3>
