@@ -4,7 +4,6 @@ from pandas import json_normalize
 # Init
 newsapi = NewsApiClient(api_key='1fa3d77b9ae7460c833ef91fe447eca4')
 
-
 def top_headlines():
     country = "gb"
     category = "technology"
