@@ -47,7 +47,7 @@
      },
       {"tag": "phishing email",
      "patterns": ["How do I know I have a phishing email", "What does a phishing email look like", "What is a phishing email", "What do I look for to check if an email is spam"],
-     "responses": ["Look at the email address not just the sender. No legitimate company, for example, will send their emails from an @gmail account. Look for misspelt domain names, or typos in the body of the email. Is it poorly written? does it include suspicious attachments or links? Attachments can have malicious links also. does the message create a sense of urgency? If not sure, always ask our Cyber Team!"]
+     "responses": ["Look at the email address not just the sender. No legitimate company, for example, will send their emails from an @gmail account. Look for misspelled domain names, or typos in the body of the email. Is it poorly written? does it include suspicious attachments or links? Attachments can have malicious links also. does the message create a sense of urgency? If not sure, always ask our Cyber Team!"]
      },
     {"tag": "strong password",
      "patterns": ["How can I make my password strong", "What are the requirements for a strong password", "Is my password strong enough"],
