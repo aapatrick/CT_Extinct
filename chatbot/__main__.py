@@ -2,12 +2,6 @@ from chatbot.controllers.main_screen_controller import CTExtinct
 
 
 def main():
-    # root = tk.Tk()
-    # cyber_chatbot = CyberChatbot(root)
-    # feedback_form = FeedbackForm(root)
-    # cyber_news = CyberNews(root)
-    # security_incident = SecurityIncident(root)
-    # ct_extinct = CTExtinct(root)
     app = CTExtinct()
     app.mainloop()
 
