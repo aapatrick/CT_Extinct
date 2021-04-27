@@ -14,7 +14,7 @@ setup(
     description="Educational Cyber Security Chatbot",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/uditvashisht/saral-square",
+    url="https://github.com/aapatrick/CT_Extinct/tree/master",
     author="Patrick Abdul-Ahad",
     author_email="aa.patrick@outlook.com",
     license="MIT",
