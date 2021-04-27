@@ -11,4 +11,5 @@ def main():
     if __name__ == "__main__":
         main()
     else:
+        main()
         print('This module cannot be imported or used by another module. Please run code from app.py file')
