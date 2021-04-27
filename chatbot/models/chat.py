@@ -8,11 +8,11 @@ from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.models import load_model
 
 lemmatizer = WordNetLemmatizer()
-intentsDictionary = json.loads(open("intents.json").read())
+intentsDictionary = json.loads(open("../../Includes/files/intents.json").read())
 
-wordList = pickle.load(open("wordList.pk1", "rb"))  # read binary
-tagList = pickle.load(open("tagList.pk1", "rb"))
-model = load_model("chatbot.h5")
+wordList = pickle.load(open("../../Includes/files/wordList.pk1", "rb"))  # read binary
+tagList = pickle.load(open("../../Includes/files/tagList.pk1", "rb"))
+model = load_model("../../Includes/files/chatbot.h5")
 
 
 # this function tokenizes each word in the sentence and lemmatizes it.

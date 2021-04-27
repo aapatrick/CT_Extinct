@@ -22,7 +22,7 @@ lemmatizer = WordNetLemmatizer()  # calling the wordNetLemmatizer constructor
 # word as "work". Wordnet is an large, freely and publicly available lexical database for the English language aiming
 # to establish structured semantic relationships between words.
 
-intentsDictionary = json.loads(open("intents.json").read())
+intentsDictionary = json.loads(open("../../Includes/files/intents.json").read())
 
 # created 3 empty lists and the letters this program will ignore
 wordList = []
@@ -53,8 +53,8 @@ print(tagList)  # testing purposes
 # Next, I am saving the data into files. Pickling is a way to convert a python object (list, dict, etc.) into a
 # character stream. The idea is that this character stream contains all the information necessary to reconstruct the
 # object in another python script.
-pickle.dump(wordList, open("wordList.pk1", "wb"))  # write binary
-pickle.dump(tagList, open("tagList.pk1", "wb"))
+pickle.dump(wordList, open("../../Includes/files/wordList.pk1", "wb"))  # write binary
+pickle.dump(tagList, open("../../Includes/files/tagList.pk1", "wb"))
 
 # The above organised data is not yet numerical, which is what we need for a machine learning algorithm.
 # The below code assigns 0 or 1 to each of the words depending on

@@ -19,7 +19,7 @@ ref.set({
 ref = db.reference("/News/Article")
 import json
 
-with open(r"C:\Users\MrLaziz\Desktop\Kingston University Level 6\Individual Project\CT_Extinct\chatbot\news.json",
+with open(r"/chatbot/news.json",
           "r") as f:
     file_contents = json.load(f)
 

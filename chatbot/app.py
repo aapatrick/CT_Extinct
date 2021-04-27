@@ -4,7 +4,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import webbrowser
 from PIL import ImageTk, Image
-from chat import get_response, predict_tag, intentsDictionary
+from chatbot.models.chat import get_response, predict_tag, intentsDictionary
 from newsapi import NewsApiClient
 from pandas import json_normalize
 
