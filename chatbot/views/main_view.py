@@ -1,6 +1,8 @@
 import tkinter as tk
-import webbrowser
-from chatbot.models.cyber_chat import get_response, predict_tag
+from tkinter import END
+
+from chatbot.models.cyber_chat import ChatbotHandler, get_response
+from chatbot.controllers.newsApi_controller import CyberNewsTopHeadings
 
 
 class SplashScreen(tk.Frame):
@@ -32,21 +34,24 @@ class CyberChatbot(tk.Frame):
         print("You are in the CYBER CHAT now!")
 
     def next_question(self, response):
-        self.entry.delete(0, "end")
+        self.entry.delete(0, END)
         self.responseL.configure(text=response)
 
     def ask_question(self):
         user_q = self.entry.get()
-        ints = predict_tag(user_q)
-        response = get_response(ints, intentsDictionary)
+        if user_q == "":
+            user_q = "Hi"
+        chatbot_handler = ChatbotHandler("../Assets/files/intents.json")
+        ints = chatbot_handler.predict_tag(user_q)
+        response = get_response(ints, chatbot_handler.intents_dictionary)
         self.next_question(response)
-
 
 
 class CyberNews(tk.Frame):
 
     def __init__(self, master, controller):
         tk.Frame.__init__(self, master)
+        self.master = master
         title_nl = tk.Label(self, text="Cyber News", font="Helvetica")
         title_nl.pack(pady=10, padx=10)
         nav_nb = tk.Button(self, text="Feedback", command=lambda: controller.show_frame_type(FeedbackForm))
@@ -54,29 +59,9 @@ class CyberNews(tk.Frame):
         self.news_buttons = []
         self.cache = None
         self.counter = 0
-        self.news_b = tk.Button(master, command=self.switch)
+        self.news_b = tk.Button(master, command=CyberNewsTopHeadings.switch)
         self.news_b.pack(pady=10, padx=10)
         print("You are in the CYBER NEWS now!")
-
-    def visit_news(self, v):
-        webbrowser.open_new_tab(v)
-
-    def switch(self):
-        if self.counter == 1:
-            for i in self.news_buttons:
-                self.news_buttons.remove(self.news_buttons[i])
-            self.counter = 0
-        if self.counter == 0:
-            self.counter = 1
-            self.get_latest_news()
-
-    def get_latest_news(self):
-        if not self.cache:
-            self.cache = self.top_headlines()
-        for k, v in self.cache.items():
-            temp = tk.Button(Chatbot.master, text=k, command=lambda: self.visit_news(v))
-            temp.pack(pady=10, padx=10)
-            self.news_buttons.append(temp)
 
 
 class FeedbackForm(tk.Frame):

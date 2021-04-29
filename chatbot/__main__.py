@@ -1,7 +1,9 @@
 from chatbot.controllers.main_screen_controller import CTExtinct
+from chatbot.models.training import TrainChatbot
 
 
 def main():
+    # train_chatbot = TrainChatbot("../Assets/files/intents.json")
     app = CTExtinct()
     app.mainloop()
 

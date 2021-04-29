@@ -35,8 +35,5 @@ class CyberSecurityForumParser:
             temp["responses"].append(a)
             self.intents.append(temp)
 
-        with open("../../Includes/files/" + self.filename, "w") as f:
+        with open("../../Assets/files/" + self.filename, "w") as f:
             json.dump(self.intents, f, indent=4, sort_keys=False)  # indent by 4 spaces and do not sort the keys
-
-
-x = CyberSecurityForumParser("https://cybersecurityforum.com/cybersecurity-faq/")
