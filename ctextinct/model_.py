@@ -25,6 +25,8 @@ import tensorflow as tf
 
 class Model:
     def __init__(self):
+        self.target = self.ref.get()
+        self.ref = db.reference("/Books/Best_Sellers/")
         self.model = load_model("chatbot.h5")
         self.tagList = pickle.load(open("tagList.pk1", "rb"))
         self.wordList = pickle.load(open("wordList.pk1", "rb"))  # read binary
@@ -62,8 +64,6 @@ class Model:
             self.ref.push().set(value)
 
     def update_database(self):
-        self.ref = db.reference("/Books/Best_Sellers/")
-        self.target = self.ref.get()
         print(self.target)
         for key, value in self.target.items():
             if value["Author"] == "J.R.R. Tolkien":
@@ -84,22 +84,18 @@ class Model:
                 self.ref.child(key).set({})
 
     def connect_to_News_API(self):
-        self.news_buttons = []
         newsapi = NewsApiClient(
             api_key='1fa3d77b9ae7460c833ef91fe447eca4')  # generated my own api key by registering
         country = "gb"
         category = "technology"
         top_titles = newsapi.get_top_headlines(category=category,
-                                                         language='en', country=country)
+                                               language='en', country=country)
         top_titles = json_normalize(top_titles['articles'])  # top_headlines organised in json format
         print(top_titles)
         new_df = top_titles[["title", "url"]]  # grabbing each top titles' title and urls
         dic = new_df.set_index('title')['url'].to_dict()
         return dic
         # creating dictionary with the value being the url and the title as the key
-
-
-
 
     # "https://cybersecurityforum.com/cybersecurity-faq/"
     def cyber_security_forum_parser(self, url):
