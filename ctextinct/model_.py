@@ -1,13 +1,8 @@
-from tkinter import END
-
-from view import View
 import firebase_admin
 from firebase_admin import db
 import json
 from newsapi import NewsApiClient
 from pandas import json_normalize
-import tkinter as tk
-import webbrowser
 from bs4 import BeautifulSoup
 import requests
 import copy
@@ -25,12 +20,10 @@ import tensorflow as tf
 
 class Model:
     def __init__(self):
-        self.target = self.ref.get()
-        self.ref = db.reference("/Books/Best_Sellers/")
-        self.model = load_model("chatbot.h5")
-        self.tagList = pickle.load(open("tagList.pk1", "rb"))
-        self.wordList = pickle.load(open("wordList.pk1", "rb"))  # read binary
-        self.intentsDictionary = json.loads(open("intents.json").read())
+        self.model = load_model("../Assets/Files/chatbot.h5")
+        self.tagList = pickle.load(open("../Assets/Files/tagList.pk1", "rb"))
+        self.wordList = pickle.load(open("../Assets/Files/wordList.pk1", "rb"))  # read binary
+        self.intentsDictionary = json.loads(open("../Assets/Files/intents.json").read())
         self.lemmatizer = WordNetLemmatizer()  # calling the wordNetLemmatizer constructor
         # the lemmatizer will reduce the word to its stem. For example, work, working, worked, works is all the same
         # stem word as "work". Wordnet is an large, freely and publicly available lexical database for the
@@ -39,8 +32,8 @@ class Model:
         print("Model Initialised")
 
     def connect_to_database(self):
-        self.ref = db.reference("/")  # setting reference to the root of the table
-        self.target = {}
+        ref = db.reference("/")  # setting reference to the root of the table
+        target = {}
         cred_obj = firebase_admin.credentials.Certificate(
             r"../../Assets/files/ctextinct-firebase-adminsdk-xnpem-e13f73b9d2.json")
         default_app = firebase_admin.initialize_app(cred_obj, {
@@ -48,20 +41,22 @@ class Model:
         })
 
     def write_to_database(self):
-        self.ref.set({
+        ref = db.reference("/")
+        target = ref.get()
+        ref.set({
             "News":
                 {
                     "Article": -1
                 }
         })
-        self.ref = db.reference("/News/Article")
+        ref = db.reference("/News/Article")
 
         # with statement automatically closes the file handler
         with open(r"../../Assets/files/feedback_responses.json", "r") as file_handler:
             file_contents = json.load(file_handler)  # convert json to python dictionary
         print(file_contents)
         for key, value in file_contents.items():
-            self.ref.push().set(value)
+            ref.push().set(value)
 
     def update_database(self):
         print(self.target)
@@ -71,19 +66,19 @@ class Model:
                 self.ref.child(key).update({"Price": 80})
 
     def retrieve_data_from_database(self):
-        self.ref = db.reference("/Books/Best_Sellers/")
+        ref = db.reference("/Books/Best_Sellers/")
         print(self.ref.order_by_child("Price").get())
-        self.ref.order_by_child("Price").limit_to_last(1).get()
-        self.ref.order_by_child("Price").limit_to_first(1).get()
-        self.ref.order_by_child("Price").equal_to(80).get()
+        ref.order_by_child("Price").limit_to_last(1).get()
+        ref.order_by_child("Price").limit_to_first(1).get()
+        ref.order_by_child("Price").equal_to(80).get()
 
     def delete_data_from_database(self):
-        self.ref = db.reference("/Books/Best_Sellers")
+        ref = db.reference("/Books/Best_Sellers")
         for key, value in self.target.items():
             if value["Author"] == "J.R.R. Tolkien":
-                self.ref.child(key).set({})
+                ref.child(key).set({})
 
-    def connect_to_News_API(self):
+    def connect_to_news_api(self):
         newsapi = NewsApiClient(
             api_key='1fa3d77b9ae7460c833ef91fe447eca4')  # generated my own api key by registering
         country = "gb"

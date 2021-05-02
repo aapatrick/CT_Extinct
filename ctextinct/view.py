@@ -65,7 +65,7 @@ class View(tk.Tk):
         self.controller.show_frame_type("splash_frame")
 
     def delete_news_buttons(self):
-        for i in range((len(self.news_buttons)-1)):
+        for i in range((len(self.news_buttons) - 1)):
             self.news_buttons.remove(self.news_buttons[i])
 
     def create_news_buttons(self):
@@ -98,64 +98,12 @@ class View(tk.Tk):
         self.incident_b.pack(padx=self.PAD, pady=self.PAD, side="left")
 
         for button in self.news_buttons:
-            self.news_buttons = tk.Button(self.cyber_news_frame, text="Latest News", font=self.FONT,
-                                     command=lambda: self.controller.on_button_click("Latest News"))
+            self.news_buttons[button] = tk.Button(self.cyber_news_frame, text="Latest News", font=self.FONT,
+                                                  command=lambda: self.controller.on_button_click("Latest News"))
 
     def next_question(self, response):
         self.chatbot_entry.delete(0, END)
         self.output_field.configure(text=response)
-
-    def visit_splash_screen(self):
-        title_sl = tk.Label(self, text="SPLASH SCREEN", font="Helvetica")
-        title_sl.pack(pady=10, padx=10)
-        nav_sb = tk.Button(self, text="Cyber Chat",
-                           command=lambda: self.controller.show_frame_type(self.cyber_bot_frame))
-        nav_sb.pack(pady=10, padx=10)
-        print("You are in the SPLASH SCREEN now!")
-
-    def visit_cyber_bot(self):
-        chat_ci = tk.Entry(self)
-        chat_ci.pack(pady=10, padx=10)
-        nav_cb = tk.Button(self, text="Cyber News",
-                           command=lambda: self.controller.show_frame_type(self.cyber_news_frame))
-        nav_cb.pack(pady=10, padx=10)
-        self.entry = tk.Entry(master)
-        self.responseL = tk.Label(master, text="Janine just joined the chat! What would you like to ask her?")
-        self.securityQ_b = tk.Button(master, text="Ask Security Questions")
-        self.master.bind('<Return>', self.ask_question())
-        self.entry.pack(row=20, column=1, columnspan=2)
-        self.responseL.pack(pady=10, padx=10)(row=30, column=1, columnspan=2)
-        self.securityQ_b.pack(pady=10, padx=10)
-
-    def visit_cyber_news(self):
-        self.master = master
-        title_nl = tk.Label(self, text="Cyber News", font="Helvetica")
-        title_nl.pack(pady=10, padx=10)
-        nav_nb = tk.Button(self, text="Feedback",
-                           command=lambda: self.controller.show_frame_type(self.feedback_form_frame))
-        nav_nb.pack(pady=10, padx=10)
-        self.news_buttons = []
-        self.cache = None
-        self.counter = 0
-        self.news_b = tk.Button(master, command=self.controller.switch_news_button)
-        self.news_b.pack(pady=10, padx=10)
-        print("You are in the CYBER NEWS now!")
-
-    def visit_feedback_form(self):
-        title_fl = tk.Label(self, text="Feedback Page", font="Helvetica")
-        title_fl.pack(pady=10, padx=10)
-        nav_fb = tk.Button(self, text="Security Incident",
-                           command=lambda: self.controller.show_frame_type(self.cyber_incident_frame))
-        nav_fb.pack(pady=10, padx=10)
-        print("You are in the FEEDBACK Form now!")
-
-    def visit_security_incident(self):
-        title_il = tk.Label(self, text="Security Incident Page", font="Helvetica")
-        title_il.pack(pady=10, padx=10)
-        nav_ib = tk.Button(self, text="Splash Screen",
-                           command=lambda: self.controller.show_frame_type(self.splash_frame))
-        nav_ib.pack(pady=10, padx=10)
-        print("You are in the SECURITY INCIDENT Form now!")
 
 # I only used self. when I needed to use that particular variable from outside its method.
 # the use of _ at the start  in the naming of a method means that the method wont be called outside the class,

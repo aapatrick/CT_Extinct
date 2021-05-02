@@ -2,6 +2,7 @@ from model_ import Model
 from view import View
 import webbrowser
 
+
 class Controller:
     # i used *args and **kwargs here because this is the main class with many features and I do not want to limit its
     # functionality. Also to reduce errors as the project increases in size.
@@ -22,9 +23,9 @@ class Controller:
 
     def on_button_click(self, button_name):
         if button_name == "news_b":
-            if self.counter==1:
-                self.model.delete_news_buttons()
-            if self.counter==0:
+            if self.counter == 1:
+                self.view.delete_news_buttons()
+            if self.counter == 0:
                 self.grab_top_twenty_news_headlines()
 
     def on_enter_key_pressed(self, user_question):
@@ -32,7 +33,7 @@ class Controller:
         self.view.next_question(response)
 
     def show_frame_type(self, frame_type):
-        visible_frame = self.model.frames_dict[frame_type]
+        visible_frame = self.view.frames_dict[frame_type]
         visible_frame.tkraise()
 
     def submit_feedback_form(self):
@@ -44,7 +45,7 @@ class Controller:
     def grab_top_twenty_news_headlines(self):
         # if statement to prevent grabbing the top headlines if grabbed already
         if not self.cache:
-            self.cache = self.model.connect_to_News_API()
+            self.cache = self.model.connect_to_news_api()
         self.view.create_news_buttons()
 
     def visit_news(self, v):

@@ -1,9 +1,11 @@
 from ctextinct.controller import Controller
-
+from ctextinct.model_ import Model
 
 def main():
-    cyber_chatbot = Controller()
-    cyber_chatbot.main()
+    training = Model()
+    training.training_model()
+    #cyber_chatbot = Controller()
+    #cyber_chatbot.main()
 
 
 if __name__ == "__main__":
