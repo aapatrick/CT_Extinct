@@ -20,30 +20,27 @@ import tensorflow as tf
 
 class Model:
     def __init__(self):
+        self.cred_obj = firebase_admin.credentials.Certificate(
+            r"../Assets/files/ctextinct-firebase-adminsdk-xnpem-e13f73b9d2.json")
+        self.default_app = firebase_admin.initialize_app(self.cred_obj, {
+            'databaseURL': "https://ctextinct-default-rtdb.europe-west1.firebasedatabase.app/"
+        })
+        self.main_ref = db.reference("/")  # setting reference to the root of the table
+        self.main_target = {}
         self.model = load_model("../Assets/Files/chatbot.h5")
         self.tagList = pickle.load(open("../Assets/Files/tagList.pk1", "rb"))
         self.wordList = pickle.load(open("../Assets/Files/wordList.pk1", "rb"))  # read binary
-        self.intentsDictionary = json.loads(open("../Assets/Files/intents.json").read())
+        self.intents_dictionary = json.loads(open("../Assets/Files/intents.json").read())
         self.lemmatizer = WordNetLemmatizer()  # calling the wordNetLemmatizer constructor
         # the lemmatizer will reduce the word to its stem. For example, work, working, worked, works is all the same
         # stem word as "work". Wordnet is an large, freely and publicly available lexical database for the
         # English language aiming to establish structured semantic relationships between words.
-        self.intents_dictionary = {}
         print("Model Initialised")
 
-    def connect_to_database(self):
-        ref = db.reference("/")  # setting reference to the root of the table
-        target = {}
-        cred_obj = firebase_admin.credentials.Certificate(
-            r"../../Assets/files/ctextinct-firebase-adminsdk-xnpem-e13f73b9d2.json")
-        default_app = firebase_admin.initialize_app(cred_obj, {
-            'databaseURL': "https://ctextinct-default-rtdb.europe-west1.firebasedatabase.app/"
-        })
-
     def write_to_database(self):
-        ref = db.reference("/")
-        target = ref.get()
-        ref.set({
+        self.main_ref = db.reference("/")
+        self.main_target = self.main_ref.get()
+        self.main_ref.set({
             "News":
                 {
                     "Article": -1
@@ -59,22 +56,21 @@ class Model:
             ref.push().set(value)
 
     def update_database(self):
-        print(self.target)
-        for key, value in self.target.items():
+        for key, value in self.main_target.items():
             if value["Author"] == "J.R.R. Tolkien":
                 value["Price"] = 90
-                self.ref.child(key).update({"Price": 80})
+                self.main_ref.child(key).update({"Price": 80})
 
     def retrieve_data_from_database(self):
         ref = db.reference("/Books/Best_Sellers/")
-        print(self.ref.order_by_child("Price").get())
+        print(ref.order_by_child("Price").get())
         ref.order_by_child("Price").limit_to_last(1).get()
         ref.order_by_child("Price").limit_to_first(1).get()
         ref.order_by_child("Price").equal_to(80).get()
 
     def delete_data_from_database(self):
         ref = db.reference("/Books/Best_Sellers")
-        for key, value in self.target.items():
+        for key, value in self.main_target.items():
             if value["Author"] == "J.R.R. Tolkien":
                 ref.child(key).set({})
 
@@ -141,7 +137,7 @@ class Model:
         ignoredCharList_t = ["?", "!", ",", "."]
 
         # I am iterating over the intents
-        for intent in self.intentsDictionary["intents"]:
+        for intent in self.intents_dictionary["intents"]:
             # for each of the patterns, the below will tokenize the sentences.
             # Meaning the sentences will split into words.
             for pattern in intent["patterns"]:
