@@ -1,3 +1,6 @@
+import os
+import sys
+
 from model_ import Model
 from view import View
 import webbrowser
@@ -16,23 +19,28 @@ class Controller:
         self.cache = False
         self.model_c = Model()  # model not aware of controller or view
         self.view_c = View(self)  # view aware of controller but not model so takes controller as argument
+
         print("Controller Initialised")
 
     def main(self):
         self.view_c.main()
 
+    def restart_program(self):
+        # Restarts the current program
+        self.view_c.destroy()
+
     def on_button_click(self, button_name):
         if button_name == "news_b":
             if self.counter == 1:
                 pass
-                # self.view_c.delete_news_buttons()
+                self.view_c.delete_news_buttons()
             if self.counter == 0:
                 self.grab_top_twenty_news_headlines()
         print("END: on_button_click")
 
     def on_enter_key_pressed(self, user_question):
         response = self.model_c.ask_question(user_question)
-        # self.view_c.next_question(response)
+        self.view_c.next_question(response)
         print("END: on_enter_key_pressed")
 
     def submit_feedback_form(self):
@@ -45,10 +53,10 @@ class Controller:
         # if statement to prevent grabbing the top headlines if grabbed already
         if not self.cache:
             self.cache = self.model_c.connect_to_news_api()
-        # self.view_c.create_news_buttons()
+        self.view_c.create_news_buttons()
 
     @staticmethod
-    def visit_news(v):
+    def visit_site(v):
         webbrowser.open_new_tab(v)
 
     def train_model(self):
