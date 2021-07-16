@@ -32,7 +32,6 @@ class Controller:
     def on_button_click(self, button_name):
         if button_name == "news_b":
             if self.counter == 1:
-                pass
                 self.view_c.delete_news_buttons()
             if self.counter == 0:
                 self.grab_top_twenty_news_headlines()
@@ -40,6 +39,7 @@ class Controller:
 
     def on_enter_key_pressed(self, user_question):
         response = self.model_c.ask_question(user_question)
+        print("response from controller"+response)
         self.view_c.next_question(response)
         print("END: on_enter_key_pressed")
 
@@ -59,8 +59,10 @@ class Controller:
     def visit_site(v):
         webbrowser.open_new_tab(v)
 
-    def train_model(self):
-        pass
+    def train_model(self, file):
+        self.model_c.training_model(file)
 
-    def parse_cyber_security_forum_and_replace_training_data(self):
-        pass
+    def parse_cyber_security_forum_and_replace_training_data(self, url):
+        self.model_c.cyber_security_forum_parser(url)
+        self.train_model(f'../Assets/Files/{url.split("/")[2].split(".")[0]}.json')
+        # F-string used as it allowed me to embed the filename formatting required inside a string with minimal syntax

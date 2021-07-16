@@ -1,4 +1,5 @@
-{"intents": [
+{
+  "intents": [
     {"tag": "greetings",
      "patterns": ["Hello", "Hey", "Hi"],
      "responses": ["What's up?", "How can I help you?", "Hi, I am at your service"]
@@ -53,4 +54,5 @@
      "patterns": ["How can I make my password strong", "What are the requirements for a strong password", "Is my password strong enough"],
      "responses": ["The recipe for a strong password that you can remember will be made up of 3 random words. Capital letters as will as Characters and Numbers should be placed within these words. Make sure its not predictable and it is at least more than 11 characters long. Do not reuse that password anywhere else"]
      }
-]}
+  ]
+}

@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import db
 import json
+import string
 from newsapi import NewsApiClient
 from pandas import json_normalize
 from bs4 import BeautifulSoup
@@ -27,10 +28,11 @@ class Model:
         })
         self.main_ref = db.reference("/")  # setting reference to the root of the table
         self.main_target = {}
-        self.model = load_model("../Assets/Files/chatbot.h5")
+        self.trained_model = load_model("../Assets/Files/chatbot.h5")
         self.tagList = pickle.load(open("../Assets/Files/tagList.pk1", "rb"))
         self.wordList = pickle.load(open("../Assets/Files/wordList.pk1", "rb"))  # read binary
-        self.intents_dictionary = json.loads(open("../Assets/Files/intents.json").read())
+        self.intents_dictionary = json.loads(open("../Assets/Files/cybersecurityforum.json").read())
+        # cybersecurityforum.json or intents.json
         self.lemmatizer = WordNetLemmatizer()  # calling the wordNetLemmatizer constructor
         # the lemmatizer will reduce the word to its stem. For example, work, working, worked, works is all the same
         # stem word as "work". Wordnet is an large, freely and publicly available lexical database for the
@@ -74,7 +76,8 @@ class Model:
             if value["Author"] == "J.R.R. Tolkien":
                 ref.child(key).set({})
 
-    def connect_to_news_api(self):
+    @staticmethod
+    def connect_to_news_api():
         newsapi = NewsApiClient(
             api_key='1fa3d77b9ae7460c833ef91fe447eca4')  # generated my own api key by registering
         country = "gb"
@@ -89,7 +92,8 @@ class Model:
         # creating dictionary with the value being the url and the title as the key
 
     # "https://cybersecurityforum.com/cybersecurity-faq/"
-    def cyber_security_forum_parser(self, url):
+    @staticmethod
+    def cyber_security_forum_parser(url):
         url = url
         filename = url.split("/")[2].split(".")[
                        0] + ".json"  # will return file name cybersecurityforum.json
@@ -109,33 +113,35 @@ class Model:
         answers = [q.text.strip() for q in
                    parser.find_all("div", class_=forum_answer_class_name)]
         # all questions and answers from each div is collected as a list
-        dataset_dict = dict(tag="#tag_placehodler", patterns=[], responses=[])
+        dataset_dict = dict(tag="", patterns=[], responses=[])
         # I will need to manually edit the resulting file with reasonable tags for each question
-        intents = []  # list for dataset_dict
-
+        intents = []
         # using zip to join the question and answer lists together
         for q, a in zip(questions, answers):
             temp = copy.deepcopy(
                 dataset_dict)  # deepcopy is a method of the module copy in python that allowed
             # me to do an independent copy of the dictionary instead of just referencing it
+            get_letters = string.ascii_lowercase  # get all possible letters
+            temp["tag"] = ''.join(random.choice(get_letters) for i in range(15))  # create random characters for the tag
             temp["patterns"].append(q)  # here i am filling the empty lists with the questions
             temp["responses"].append(a)
             intents.append(temp)
 
-        with open("../../Assets/files/" + filename, "w") as f:
-            json.dump(intents, f, indent=4, sort_keys=False)  # indent by 4 spaces and do not sort the keys
+        intents_dict = {"intents": intents}
 
-    def training_model(self):
+        with open("../Assets/files/" + filename, "w") as f:
+            json.dump(intents_dict, f, indent=2, sort_keys=False)  # indent by 4 spaces and do not sort the keys
+
+    def training_model(self, file):
         # physical_devices = tf.config.list_physical_devices('CPU')
         # tf.config.experimental.set_memory_growth(physical_devices[0], True)
-        # used when training using CUDA and NVIDIA Graphics card. SGD stands for Stochastic gradient descent
-
+        # used when training using CUDA and NVIDIA Graphics card.
+        self.intents_dictionary = json.loads(open(file).read())
         # created 3 empty lists and the letters this program will ignore
         wordList_t = []
         tagList_t = []
         documentList_t = []  # this list will be used for the linked tokenized words and tags
         ignoredCharList_t = ["?", "!", ",", "."]
-
         # I am iterating over the intents
         for intent in self.intents_dictionary["intents"]:
             # for each of the patterns, the below will tokenize the sentences.
@@ -167,9 +173,9 @@ class Model:
         # The above organised data is not yet numerical, which is what we need for a machine learning algorithm.
         # The below code assigns 0 or 1 to each of the words depending on
         training = []
-        outputEmpty = [0] * len(tagList_t)  # as many 0 as there are classes
+        outputEmpty = [0] * len(tagList_t)  # as many 0 as there are tags
         # turning our data into Matrices, (harder than image data (because RGB uses numbers))
-        for document in documentList_t:
+        for document in documentList_t:  # document = (array,tag) array is made up of words from a "pattern"
             bag = []  # bag of words model used here--- the inputs of 1s & 0s into the machine learning algorithm
             wordPatterns = document[0]  # each document is a list of (pattern and related tag)
             wordPatterns = [self.lemmatizer.lemmatize(eachWord.lower()) for eachWord in wordPatterns]
@@ -179,28 +185,33 @@ class Model:
 
             outputRow = list(outputEmpty)  # copying outputEmpty into OutputRow.
             outputRow[tagList_t.index(document[1])] = 1  # The output row is the "Prediction" of the related tag
-            training.append(
-                [bag, outputRow])  # example: bag(10100010101000000000100001001000) outputRow(000010000) how many
-            # words relate to a certain tag
+            training.append([bag, outputRow])  # example: bag(10100010101000000000100001001000) outputRow(000010000)
+            # how many words relate to a certain tag
         # preprocessing the data
         random.shuffle(training)
         training = np.array(training)  # converting to numpy array
 
-        trainX = list(training[:, 0])  # features that we wil use
-        trainY = list(training[:, 1])  # labels that we will use to train
+        trainX = list(training[:, 0])  # train the words
+        trainY = list(training[:, 1])  # train the tags
+
 
         # Start of building Neural Network model
-        model_t = Sequential()
-        model_t.add(Dense(128, input_shape=(len(trainX[0]),), activation="relu"))
+        # Keras need to know the shape of their inputs in order to be able to create their weights.
+        # the shape of the weights depends on the shape of the inputs
+        model_t = Sequential()  # single input, will get single output, before moving to next input. this has 5 layers.
+        model_t.add(Dense(128, input_shape=(len(trainX[0]),), activation="relu"))  # 128 nodes in first layer
         model_t.add(Dropout(0.5))
-        model_t.add(Dense(64, activation="relu"))
+        model_t.add(Dense(64, activation="relu"))  # using relu to decide which neurons are activated for each layer
         model_t.add(Dropout(0.5))
         model_t.add(Dense(len(trainY[0]), activation="softmax"))  #
-
-        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+        # SGD stands for Stochastic gradient descent (optimizer)
+        # model.compile specifies network configurations
+        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)  # lr = learning rate
         model_t.compile(loss="categorical_crossentropy", optimizer=sgd, metrics=["accuracy"])
-
+        # train model and save in a Hierarchical Data Format file
         hist = model_t.fit(np.array(trainX), np.array(trainY), epochs=200, batch_size=5, verbose=1)
+        print(model_t.weights)
+        print(model_t.summary())
         model_t.save("../Assets/Files/chatbot.h5", hist)
         print("Done")
 
@@ -223,25 +234,28 @@ class Model:
     # for predicting the tag based on the sentence inputted
     def predict_tag(self, sentence):
         bag_of_w = self.bag_of_words(sentence)  # this will be inputted into the neural network
-        result_tag = self.model.predict(np.array([bag_of_w]))[0]  # 0 added to match the format
-        ERROR_THRESHOLD = 0.25
+        result_tag = self.trained_model.predict(np.array([bag_of_w]))[0]  # 0 added to match the format
+        print("Result tag after going through tranied model: " + str(result_tag))
+        ERROR_THRESHOLD = 0.0025  # should set it to 0.25 but testing
         percentage_res = [[i, r] for i, r in enumerate(result_tag) if r > ERROR_THRESHOLD]
-
         percentage_res.sort(key=lambda x: x[1], reverse=True)
         return_list = []
         for r in percentage_res:
             return_list.append({"intent": self.tagList[r[0]], "probability": str(r[1])})
+        print("PREDICT TAG : " + str(return_list))
         return return_list
 
     # for giving a response
     def get_response(self, intents_list, intents_json):
         result_response = ""
-        tag = intents_list[0]["intent"]
+        tag = intents_list[0]["intent"]  # only choose the first tag (one with the highest percentage)
         list_of_intents = intents_json["intents"]
+        # Go through all intents in original json file and find the intent with the matching tag, choose random answer
         for i in list_of_intents:
             if i["tag"] == tag:
                 result_response = random.choice(i["responses"])
                 break
+        print("from GETRESPONSE def: "+ result_response)
         return result_response
 
     def ask_question(self, user_question):
@@ -249,4 +263,5 @@ class Model:
             user_question = "Hi"
         ints = self.predict_tag(user_question)
         response = self.get_response(ints, self.intents_dictionary)
+        print("From model response : "+ response)
         return response
