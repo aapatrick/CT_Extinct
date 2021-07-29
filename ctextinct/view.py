@@ -37,8 +37,7 @@ class View(tk.Tk):
         self.frames_dict = {}
         self.news_buttons = []
         self.nav = False
-        # simulating a delay while loading
-        time.sleep(3)
+        time.sleep(3)  # simulating a delay while loading
         # loading finished so splash screen destroyed
         splash_screen.destroy()
         # show main_window again
@@ -135,6 +134,15 @@ class View(tk.Tk):
             temp.pack(pady=self.PAD, padx=self.PAD)
             self.news_buttons.append(temp)
 
+    def _make_cyber_news_widgets(self):
+        title_l = tk.Label(self.cyber_news_frame, text="Top 20 Cyber Headlines")
+        title_l.pack(padx=self.PAD, pady=self.PAD)
+
+    def next_question(self, response):
+        self.chatbot_entry.delete(0, END)
+        print(response+"= responsE")
+        self.output_field.configure(text=response)
+
     def _make_cyber_bot_widgets(self):
         self.input_frame = tk.Frame(self.cyber_bot_frame, bg=self.COMPANY_COLOR)
         self.output_frame = tk.Frame(self.cyber_bot_frame, bg=self.COMPANY_COLOR)
@@ -160,15 +168,6 @@ class View(tk.Tk):
         # tip.label.config(bg="red", fg="white", bd=20)
         # tip.message.config(bg="red", fg="white")
         # tip.bind_widget(self.chatbot_entry, balloonmsg="Please press enter")
-
-    def _make_cyber_news_widgets(self):
-        title_l = tk.Label(self.cyber_news_frame, text="Top 20 Cyber Headlines")
-        title_l.pack(padx=self.PAD, pady=self.PAD)
-
-    def next_question(self, response):
-        self.chatbot_entry.delete(0, END)
-        print(response+"= responsE")
-        self.output_field.configure(text=response)
 
 # I only used self. when I needed to use that particular variable from outside its method.
 # the use of _ at the start  in the naming of a method means that the method wont be called outside the class,

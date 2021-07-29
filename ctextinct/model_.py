@@ -2,7 +2,8 @@ import firebase_admin
 from firebase_admin import db
 import json
 import string
-from newsapi import NewsApiClient
+#  from newsapi import NewsApiClient
+from newsapi.newsapi_client import NewsApiClient
 from pandas import json_normalize
 from bs4 import BeautifulSoup
 import requests
@@ -31,7 +32,7 @@ class Model:
         self.trained_model = load_model("../Assets/Files/chatbot.h5")
         self.tagList = pickle.load(open("../Assets/Files/tagList.pk1", "rb"))
         self.wordList = pickle.load(open("../Assets/Files/wordList.pk1", "rb"))  # read binary
-        self.intents_dictionary = json.loads(open("../Assets/Files/cybersecurityforum.json").read())
+        self.intents_dictionary = json.loads(open("../Assets/Files/intents.json").read())
         # cybersecurityforum.json or intents.json
         self.lemmatizer = WordNetLemmatizer()  # calling the wordNetLemmatizer constructor
         # the lemmatizer will reduce the word to its stem. For example, work, working, worked, works is all the same
@@ -100,8 +101,7 @@ class Model:
         forum_question_class_name = "faq-question"
         forum_answer_class_name = "faq-answer"
 
-        fake_browser = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:77.0) Gecko/20100101 '
-                                      'Firefox/77.0'}
+        fake_browser = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:77.0) Gecko/20100101 Firefox/77.0'}
         response = requests.get(url, headers=fake_browser)  # get all the text from specified url
 
         parser = BeautifulSoup(response.content, features="html.parser")
